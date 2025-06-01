@@ -5,10 +5,8 @@ import AuthHeader from './components/AuthHeader';
 import InputField from './components/InputField';
 import AuthButton from './components/AuthButton';
 
-// Placeholder hooks for backend interaction
-// const { data, isLoading } = useGetLogin();
-// const { mutate: login } = usePostLogin();
-
+// Re-using icons defined in Login.tsx or similar context
+// It would be better to move these to their own file if used in multiple places
 const EmailIcon = () => (
   <svg className="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" d="M16 12l-4-4-4 4m8 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6" />
@@ -21,28 +19,37 @@ const PasswordIcon = () => (
   </svg>
 );
 
-const Login: React.FC = () => {
+// Placeholder hooks for backend interaction
+// const { mutate: signUp } = usePostSignUp();
+
+const CreateAccount: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Call login mutation here
-    // login({ email, password });
+    if (password !== confirmPassword) {
+      // Handle password mismatch error
+      alert("Passwords do not match!");
+      return;
+    }
+    // Call signUp mutation here
+    // signUp({ email, password });
   };
 
   return (
-    <AuthLayout title="Login">
+    <AuthLayout title="Create Account">
       <AuthHeader 
-        mainText="Welcome to Libra Wallet!" 
-        subText="Login to your account" 
+        mainText="Get Started" 
+        subText="Create an account to continue" 
       />
       <form onSubmit={handleSubmit} className="space-y-6">
         <InputField
           id="email"
           label="Email"
           type="email"
-          placeholder="test_user@gmail.com"
+          placeholder="Enter your email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           icon={<EmailIcon />}
@@ -52,24 +59,34 @@ const Login: React.FC = () => {
           id="password"
           label="Password"
           type="password"
-          placeholder="••••••••••"
+          placeholder="Enter your password"
           value={password}
           onChange={e => setPassword(e.target.value)}
           icon={<PasswordIcon />}
           required
         />
+        <InputField
+          id="confirmPassword"
+          label="Confirm Password"
+          type="password"
+          placeholder="Confirm your password"
+          value={confirmPassword}
+          onChange={e => setConfirmPassword(e.target.value)}
+          icon={<PasswordIcon />}
+          required
+        />
         <AuthButton type="submit">
-          Login
+          Sign Up
         </AuthButton>
       </form>
       <div className="text-center mt-8 text-gray-400">
-        Don't have an account?{' '}
-        <Link to="/create-account" className="text-teal-400 font-semibold hover:underline">
-          Sign Up
+        Already have an account?{' '}
+        <Link to="/login" className="text-teal-400 font-semibold hover:underline">
+          Login
         </Link>
       </div>
     </AuthLayout>
   );
 };
 
-export default Login; 
+export default CreateAccount; 
