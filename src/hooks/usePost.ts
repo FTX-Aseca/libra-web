@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { API_URL } from './utils/routes';
+import { getAuthToken } from '../utils/auth';
 
 type UsePostProps = {
   path: string;
@@ -22,9 +23,16 @@ export default function usePost({
     async (body: any) => {
       setLoading(true);
       setError(undefined);
+      const token = getAuthToken();
+      const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+
       try {
         const response = await axios.post(`${API_URL}${path}`, body, {
-          headers: { ...headers, 'Content-Type': 'application/json' }
+          headers: { 
+            ...headers, 
+            'Content-Type': 'application/json',
+            ...authHeaders
+          }
         });
         setData(response.data);
         if (onSuccess) {
@@ -36,6 +44,7 @@ export default function usePost({
         if (onError) {
           onError(err);
         }
+        throw err;
       }
       setLoading(false);
     },

@@ -7,29 +7,35 @@ import SettingsPage from './SettingsPage';
 import TransactionsPage from './TransactionsPage';
 import EnterDebinAmountPage from './EnterDebinAmountPage';
 import DebinRequestSentPage from './DebinRequestSentPage';
+import AuthGuard from './components/AuthGuard';
+import { getAuthToken } from './utils/auth';
 
 // Placeholder components for other routes
 // const TransferPage = () => <div className="p-4 text-white">Transfer Page Content</div>;
 // const TransactionsPage = () => <div className="p-4 text-white">Transactions Page Content</div>;
 
 function App() {
+  const isAuthenticated = !!getAuthToken();
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/create-account" element={<CreateAccount />} />
-      <Route path="/home" element={<HomePage />} />
-      <Route path="/transfer" element={<TransferPage />} />
-      <Route path="/transactions" element={<TransactionsPage />} />
-      <Route path="/settings" element={<SettingsPage />} />
 
-      {/* DEBIN Flow Routes */}
-      <Route path="/debin/enter-amount" element={<EnterDebinAmountPage />} />
-      <Route path="/debin/request-sent" element={<DebinRequestSentPage />} />
+      <Route element={<AuthGuard />}>
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/transfer" element={<TransferPage />} />
+        <Route path="/transactions" element={<TransactionsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
 
-      {/* Default redirect to home page if logged in, otherwise login */}
-      {/* For now, always redirect to login if no match, 
-          assuming no auth state is handled yet */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/debin/enter-amount" element={<EnterDebinAmountPage />} />
+        <Route path="/debin/request-sent" element={<DebinRequestSentPage />} />
+      </Route>
+
+      <Route 
+        path="*" 
+        element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />} 
+      />
     </Routes>
   );
 }

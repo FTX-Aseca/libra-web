@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AuthLayout from './components/AuthLayout';
 import AuthHeader from './components/AuthHeader';
 import InputField from './components/InputField';
@@ -26,18 +26,16 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, loading, error, data } = useLogin();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await login({ email, password });
       if (response) {
-        console.log('Login successful:', response);
-        navigate('/dashboard');
+        console.log('Login successful in component:', response);
       }
     } catch (err) {
-      console.error('Login failed:', err);
+      console.error('Login component error handling:', err);
     }
   };
 

@@ -1,7 +1,8 @@
 import React from 'react';
 import BottomNavigationBar from './components/BottomNavigationBar';
 import CopyIcon from './components/icons/CopyIcon';
-// import { useNavigate } from 'react-router-dom'; // For logout redirection
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { removeAuthToken } from './utils/auth'; // Corrected import path
 
 // Placeholder user data - replace with actual data from context or props
 const userSettingsData = {
@@ -36,12 +37,14 @@ const InfoItem: React.FC<InfoItemProps> = ({ label, value }) => {
 };
 
 const SettingsPage: React.FC = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleLogout = () => {
-    // Placeholder: Implement actual logout logic (clear auth state, etc.)
-    alert('Logout clicked');
-    // navigate('/login');
+    removeAuthToken(); // Clear the auth token
+    navigate('/login', { replace: true }); // Redirect to login
+    // Optionally: Call a backend logout endpoint if you have one
+    // Optionally: Clear any other user-related state (e.g., from Zustand, Redux, Context)
+    console.log('User logged out');
   };
 
   return (
