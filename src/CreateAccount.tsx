@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from './components/AuthLayout';
 import AuthHeader from './components/AuthHeader';
 import InputField from './components/InputField';
 import AuthButton from './components/AuthButton';
+import { useRegister } from './hooks/auth/useRegister';
 
 // Re-using icons defined in Login.tsx or similar context
 // It would be better to move these to their own file if used in multiple places
@@ -26,16 +27,27 @@ const CreateAccount: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { register, loading, error, data } = useRegister();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      // Handle password mismatch error
-      alert("Passwords do not match!");
+      alert("Passwords do not match!"); // Consider a more user-friendly error display
       return;
     }
-    // Call signUp mutation here
-    // signUp({ email, password });
+    try {
+      const response = await register({ email, password });
+      // TODO: Handle successful registration, e.g., redirect to login or dashboard
+      if (response) { // Assuming response indicates success
+        console.log('Registration successful:', response);
+        navigate('/login'); // Redirect to login page after successful registration
+      }
+    } catch (err) {
+      // Error is captured by the hook
+      console.error('Registration failed:', err);
+      // TODO: Display error to user
+    }
   };
 
   return (
@@ -75,9 +87,10 @@ const CreateAccount: React.FC = () => {
           icon={<PasswordIcon />}
           required
         />
-        <AuthButton type="submit">
-          Sign Up
+        <AuthButton type="submit" disabled={loading}>
+          {loading ? 'Signing up...' : 'Sign Up'}
         </AuthButton>
+        {error && <p className="text-red-500 text-center">Registration failed. Please try again.</p>}
       </form>
       <div className="text-center mt-8 text-gray-400">
         Already have an account?{' '}

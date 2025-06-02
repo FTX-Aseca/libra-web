@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from './components/AuthLayout';
 import AuthHeader from './components/AuthHeader';
 import InputField from './components/InputField';
 import AuthButton from './components/AuthButton';
+import { useLogin } from './hooks/auth/useLogin';
 
 // Placeholder hooks for backend interaction
 // const { data, isLoading } = useGetLogin();
@@ -24,11 +25,20 @@ const PasswordIcon = () => (
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login, loading, error, data } = useLogin();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Call login mutation here
-    // login({ email, password });
+    try {
+      const response = await login({ email, password });
+      if (response) {
+        console.log('Login successful:', response);
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
   };
 
   return (
@@ -58,9 +68,10 @@ const Login: React.FC = () => {
           icon={<PasswordIcon />}
           required
         />
-        <AuthButton type="submit">
-          Login
+        <AuthButton type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
         </AuthButton>
+        {error && <p className="text-red-500 text-center">Login failed. Please check your credentials.</p>}
       </form>
       <div className="text-center mt-8 text-gray-400">
         Don't have an account?{' '}
