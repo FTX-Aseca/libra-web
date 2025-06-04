@@ -5,29 +5,31 @@ import Tabs from './components/Tabs';
 import InputField from './components/InputField';
 import AuthButton from './components/AuthButton';
 import UserIcon from './components/icons/UserIcon'; // Assuming UserIcon is created
+import { IdentifierType } from './types/api';
 
 // Placeholder for potential future navigation or step handling
 // import { useNavigate } from 'react-router-dom';
 
 const TransferTabContent: React.FC = () => {
   const [alias, setAlias] = useState('');
-  const [transferType, setTransferType] = useState<'Alias' | 'CVU'>('Alias');
-
-  // const navigate = useNavigate();
+  const [transferType, setTransferType] = useState<IdentifierType>(IdentifierType.ALIAS);
+  const navigate = useNavigate();
 
   const handleContinue = () => {
-    // Placeholder: navigate to an amount entry screen or next step
-    // navigate('/transfer/amount', { state: { recipient: alias, type: transferType } });
-    alert(`Continuing with ${transferType}: ${alias}`);
+    if (!alias.trim()) {
+      alert('Please enter a valid alias.');
+      return;
+    }
+    navigate('/transfer/amount', { state: { recipientAlias: alias, transferType } });
   };
 
   return (
     <div className="px-4">
       <div className="flex mb-4">
         <button 
-          onClick={() => setTransferType('Alias')}
+          onClick={() => setTransferType(IdentifierType.ALIAS)}
           className={`py-2 px-4 rounded-l-md text-sm font-medium w-1/2 ${
-            transferType === 'Alias' 
+            transferType === IdentifierType.ALIAS 
             ? 'bg-teal-500 text-white' 
             : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
           }`}
@@ -35,9 +37,9 @@ const TransferTabContent: React.FC = () => {
           Alias
         </button>
         <button 
-          onClick={() => setTransferType('CVU')}
+          onClick={() => setTransferType(IdentifierType.CVU)}
           className={`py-2 px-4 rounded-r-md text-sm font-medium w-1/2 ${
-            transferType === 'CVU' 
+            transferType === IdentifierType.CVU 
             ? 'bg-teal-500 text-white' 
             : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
           }`}
@@ -77,10 +79,16 @@ const DebinTabContent: React.FC = () => {
 };
 
 const TopUpTabContent: React.FC = () => {
+  const navigate = useNavigate();
+  const handleContinueTopUp = () => {
+    navigate('/topup');
+  };
   return (
     <div className="px-4">
-      <p className="text-gray-400 text-center">Top-up functionality coming soon.</p>
-      {/* Placeholder for top-up options if any */}
+      <p className="text-gray-400 mb-6 text-center">Request Top-Up</p>
+      <AuthButton onClick={handleContinueTopUp} fullWidth>
+        Continue
+      </AuthButton>
     </div>
   );
 };

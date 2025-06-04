@@ -11,11 +11,16 @@ type Props = {
   lazy?: boolean; // Added lazy option
 };
 
+// Define stable defaults outside the hook
+const DEFAULT_HEADERS = {};
+const DEFAULT_ON_SUCCESS = () => {};
+const DEFAULT_ON_ERROR = () => {};
+
 export const useGet = <T>({
   path,
-  headers = {},
-  onSuccess = () => {},
-  onError = () => {},
+  headers = DEFAULT_HEADERS,
+  onSuccess = DEFAULT_ON_SUCCESS,
+  onError = DEFAULT_ON_ERROR,
   lazy = false // Default to not lazy
 }: Props) => {
   const [data, setData] = useState<T | null>(null);
@@ -26,6 +31,7 @@ export const useGet = <T>({
     setLoading(true);
     setError(null);
     const token = getAuthToken();
+    console.log('[useGet] Retrieved auth token:', token ? `Bearer ${token}` : 'No token found');
     const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
     const currentPath = fetchPath || path;
     const currentHeaders = { ...headers, ...fetchHeaders, ...authHeaders };
@@ -34,19 +40,23 @@ export const useGet = <T>({
       const response = await axios.get(`${API_URL}${currentPath}`, { headers: currentHeaders });
       setData(response.data as T);
       if (onSuccess) onSuccess(response.data);
-      setLoading(false);
       return response.data as T;
     } catch (err: any) {
       setError(err);
       if (onError) onError(err);
-      setLoading(false);
       throw err;
+    } finally {
+      setLoading(false); // Ensure loading is set to false in all cases
     }
-  }, [path, headers, onSuccess, onError]); // Dependencies for fetchData
+  }, [path, headers, onSuccess, onError]);
 
   useEffect(() => {
     if (!lazy) {
-      fetchData();
+      fetchData().catch(() => {
+        // Catch errors from the initial fetchData call originating from useEffect
+        // This prevents unhandled promise rejections if the initial fetch fails
+        // The error state is already set by fetchData itself.
+      });
     }
     // Cleanup function if needed, e.g., for cancelling requests
     // return () => { /* cancel axios request if component unmounts */ };

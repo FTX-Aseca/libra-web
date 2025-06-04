@@ -7,6 +7,10 @@ import SettingsPage from './SettingsPage';
 import TransactionsPage from './TransactionsPage';
 import EnterDebinAmountPage from './EnterDebinAmountPage';
 import DebinRequestSentPage from './DebinRequestSentPage';
+import EnterTransferAmountPage from './pages/transfer/EnterTransferAmountPage';
+import TransferSentPage from './pages/transfer/TransferSentPage';
+import TopUpDetailsPage from './pages/topup/TopUpDetailsPage';
+import TopUpRequestSentPage from './pages/topup/TopUpRequestSentPage';
 import AuthGuard from './components/AuthGuard';
 import { getAuthToken } from './utils/auth';
 
@@ -25,11 +29,15 @@ function App() {
       <Route element={<AuthGuard />}>
         <Route path="/home" element={<HomePage />} />
         <Route path="/transfer" element={<TransferPage />} />
+        <Route path="/transfer/amount" element={<EnterTransferAmountPage />} />
+        <Route path="/transfer/sent" element={<TransferSentPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
 
         <Route path="/debin/enter-amount" element={<EnterDebinAmountPage />} />
         <Route path="/debin/request-sent" element={<DebinRequestSentPage />} />
+        <Route path="/topup" element={<TopUpDetailsPage />} />
+        <Route path="/topup/sent" element={<TopUpRequestSentPage />} />
       </Route>
 
       <Route 

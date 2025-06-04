@@ -4,23 +4,29 @@ import BottomNavigationBar from './components/BottomNavigationBar';
 import InputField from './components/InputField';
 import AuthButton from './components/AuthButton';
 import DollarSignIcon from './components/icons/DollarSignIcon';
+import { useDebinRequest } from './hooks/debin/useDebinRequest';
 
 const EnterDebinAmountPage: React.FC = () => {
   const [amount, setAmount] = useState('');
+  const { requestDebin, loading, error } = useDebinRequest();
   const navigate = useNavigate();
 
   // In a real app, you might get recipient info from route state or context
   // const location = useLocation();
   // const { recipient } = location.state || { recipient: 'Unknown' };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!amount || parseFloat(amount) <= 0) {
       alert('Please enter a valid amount.');
       return;
     }
-    // Placeholder: In a real app, call API to create DEBIN request
-    // For now, navigate to success screen with amount
-    navigate('/debin/request-sent', { state: { amount: parseFloat(amount) } });
+    try {
+      await requestDebin({ amount: parseFloat(amount) });
+      navigate('/debin/request-sent', { state: { amount: parseFloat(amount) } });
+    } catch (err) {
+      console.error('DEBIN request error:', err);
+      alert('Error sending DEBIN request');
+    }
   };
 
   return (
@@ -37,7 +43,7 @@ const EnterDebinAmountPage: React.FC = () => {
           icon={<DollarSignIcon />}
           required
         />
-        <AuthButton onClick={handleConfirm} fullWidth={true}>
+        <AuthButton onClick={handleConfirm} fullWidth={true} disabled={loading}>
           Confirm
         </AuthButton>
       </div>
