@@ -12,7 +12,7 @@ const EnterTransferAmountPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { recipientAlias, transferType } = (location.state as { recipientAlias: string; transferType: IdentifierType }) || { recipientAlias: 'Unknown', transferType: IdentifierType.ALIAS };
-  const { transfer, loading, error } = useTransfer();
+  const { transfer, loading } = useTransfer();
 
   const handleConfirmTransfer = async () => {
     if (!amount || parseFloat(amount) <= 0) {
