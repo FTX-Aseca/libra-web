@@ -4,11 +4,11 @@ import BottomNavigationBar from './components/BottomNavigationBar';
 import InputField from './components/InputField';
 import AuthButton from './components/AuthButton';
 import DollarSignIcon from './components/icons/DollarSignIcon';
-import { useDebinRequest } from './hooks/debin/useDebinRequest';
+import { useExternalTransfers } from './hooks/transactions/useExternalTransfers';
 
 const EnterDebinAmountPage: React.FC = () => {
   const [amount, setAmount] = useState('');
-  const { requestDebin, loading, error } = useDebinRequest();
+  const { requestDebin, loading } = useExternalTransfers();
   const navigate = useNavigate();
 
   // In a real app, you might get recipient info from route state or context

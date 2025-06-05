@@ -57,6 +57,7 @@ export interface TopUpRequest {
 }
 
 export interface TopUpResponse {
+  id: string;
   amount: number;
   timestamp: string;
 }
@@ -66,6 +67,7 @@ export interface DebinRequestDto {
 }
 
 export interface DebinResponse {
+  id: string;
   amount: number;
   timestamp: string;
 }

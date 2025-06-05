@@ -3,13 +3,22 @@ import usePost from '../usePost';
 import { useGet } from '../useGet';
 import type { TransactionRequest, TransactionResponse } from '../../types/api';
 
+// A new type that includes a client-side unique ID
+export type Transaction = TransactionResponse & { id: string };
+
+let nextId = 0;
+
 export const useGetAccountTransactions = (accountId: number) => {
   const path = React.useMemo(() => `/api/accounts/${accountId}/transactions`, [accountId]);
-  const { data, loading, error, call: fetchTransactions } = useGet<TransactionResponse[]>({
+  const { data: rawTransactions, loading, error, call: fetchTransactions } = useGet<TransactionResponse[]>({
     path: path,
   });
 
-  return { data, loading, error, fetchTransactions };
+  const transactionsWithId = React.useMemo(() => {
+    return rawTransactions?.map(tx => ({ ...tx, id: `tx-${nextId++}` })) || [];
+  }, [rawTransactions]);
+
+  return { data: transactionsWithId, loading, error, fetchTransactions };
 };
 
 export const useCreateTransaction = (accountId: number) => {
@@ -17,10 +26,13 @@ export const useCreateTransaction = (accountId: number) => {
     path: `/api/accounts/${accountId}/transactions`,
   });
 
-  const createTransaction = async (transactionData: TransactionRequest): Promise<TransactionResponse | null> => {
+  const createTransaction = async (transactionData: TransactionRequest): Promise<Transaction | null> => {
     try {
-      const response = await call(transactionData);
-      return response as TransactionResponse;
+      const response = await call(transactionData) as TransactionResponse;
+      if (response) {
+        return { ...response, id: `tx-${nextId++}` };
+      }
+      return null;
     } catch (err: any) {
       console.error('Create transaction hook error:', err);
       // Add more detailed logging for Axios errors
@@ -37,5 +49,5 @@ export const useCreateTransaction = (accountId: number) => {
     }
   };
 
-  return { createTransaction, data: data as TransactionResponse | null, loading, error };
+  return { createTransaction, data: data as Transaction | null, loading, error };
 }; 

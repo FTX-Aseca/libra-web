@@ -4,11 +4,11 @@ import BottomNavigationBar from '../../components/BottomNavigationBar';
 import InputField from '../../components/InputField';
 import AuthButton from '../../components/AuthButton';
 import DollarSignIcon from '../../components/icons/DollarSignIcon';
-import { useTopUp } from '../../hooks/topup/useTopUp';
+import { useExternalTransfers } from '../../hooks/transactions/useExternalTransfers';
 
 const TopUpDetailsPage: React.FC = () => {
   const [amount, setAmount] = useState('');
-  const { topUp, loading, error } = useTopUp();
+  const { requestTopUp, loading } = useExternalTransfers();
   const navigate = useNavigate();
 
   const handleContinue = async () => {
@@ -17,7 +17,7 @@ const TopUpDetailsPage: React.FC = () => {
       return;
     }
     try {
-      await topUp({ amount: parseFloat(amount) });
+      await requestTopUp({ amount: parseFloat(amount) });
       navigate('/topup/sent', { state: { amount: parseFloat(amount) } });
     } catch (err) {
       console.error('Top-up error:', err);
