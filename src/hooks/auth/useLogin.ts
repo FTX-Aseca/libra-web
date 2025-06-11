@@ -4,7 +4,10 @@ import { saveAuthToken } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
-  const [call, { data, loading, error }] = usePost({ path: "/api/auth/login", skipAuth: true });
+  const [call, { data, loading, error }] = usePost({
+    path: "/api/auth/login",
+    skipAuth: true,
+  });
   const navigate = useNavigate();
 
   const login = async (

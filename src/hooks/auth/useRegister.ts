@@ -2,7 +2,10 @@ import usePost from "../usePost";
 import type { RegisterRequest, AuthResponse } from "../../types/api";
 
 export const useRegister = () => {
-  const [call, { data, loading, error }] = usePost({ path: "/api/auth/register", skipAuth: true });
+  const [call, { data, loading, error }] = usePost({
+    path: "/api/auth/register",
+    skipAuth: true,
+  });
 
   const register = async (
     userData: RegisterRequest,

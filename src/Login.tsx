@@ -86,11 +86,7 @@ const Login: React.FC = () => {
           icon={<PasswordIcon />}
           required
         />
-        <AuthButton
-          data-cy="login_button"
-          type="submit"
-          disabled={loading}
-        >
+        <AuthButton data-cy="login_button" type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Submit"}
         </AuthButton>
         {error != null && (
@@ -100,7 +96,7 @@ const Login: React.FC = () => {
         )}
       </form>
       <div className="text-center mt-8 text-gray-400">
-        Don't have an account?{' '}
+        Don't have an account?{" "}
         <Link
           data-cy="alternate_auth_button"
           to="/create-account"
