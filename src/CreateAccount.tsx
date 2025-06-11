@@ -108,10 +108,10 @@ const CreateAccount: React.FC = () => {
           icon={<PasswordIcon />}
           required
         />
-        <AuthButton type="submit" disabled={loading}>
+        <AuthButton data-cy="sign_up_button" type="submit" disabled={loading}>
           {loading ? "Signing up..." : "Sign Up"}
         </AuthButton>
-        {error && (
+        {error != null && (
           <p className="text-red-500 text-center">
             Registration failed. Please try again.
           </p>

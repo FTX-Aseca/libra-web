@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 /libra-ui/
+
+/cypress/screenshots/
+/cypress/videos/

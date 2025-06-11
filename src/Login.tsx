@@ -86,18 +86,23 @@ const Login: React.FC = () => {
           icon={<PasswordIcon />}
           required
         />
-        <AuthButton type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+        <AuthButton
+          data-cy="login_button"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Submit"}
         </AuthButton>
-        {error && (
+        {error != null && (
           <p className="text-red-500 text-center">
             Login failed. Please check your credentials.
           </p>
         )}
       </form>
       <div className="text-center mt-8 text-gray-400">
-        Don't have an account?{" "}
+        Don't have an account?{' '}
         <Link
+          data-cy="alternate_auth_button"
           to="/create-account"
           className="text-teal-400 font-semibold hover:underline"
         >

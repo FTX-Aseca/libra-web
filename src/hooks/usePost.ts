@@ -8,12 +8,14 @@ type UsePostProps = {
   headers?: Record<string, string>;
   onSuccess?: (body?: unknown) => void;
   onError?: (error?: unknown) => void;
+  skipAuth?: boolean;
 };
 export default function usePost({
   path,
   headers = {},
   onSuccess = () => {},
   onError = () => {},
+  skipAuth = false,
 }: UsePostProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>();
@@ -23,7 +25,7 @@ export default function usePost({
     async (body: unknown) => {
       setLoading(true);
       setError(undefined);
-      const token = getAuthToken();
+      const token = skipAuth ? null : getAuthToken();
       const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
       try {
@@ -48,7 +50,7 @@ export default function usePost({
       }
       setLoading(false);
     },
-    [path, headers, onSuccess, onError],
+    [path, headers, onSuccess, onError, skipAuth],
   );
 
   return [call, { data, loading, error }] as const;
