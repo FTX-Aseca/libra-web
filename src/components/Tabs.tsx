@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface TabItem {
   label: string;
@@ -22,8 +22,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs, initialTab = 0 }) => {
             className={`py-2 px-4 text-sm font-medium 
                         ${
                           activeTab === index
-                            ? 'border-b-2 border-teal-400 text-teal-400'
-                            : 'text-gray-400 hover:text-gray-200'
+                            ? "border-b-2 border-teal-400 text-teal-400"
+                            : "text-gray-400 hover:text-gray-200"
                         }`}
             onClick={() => setActiveTab(index)}
           >
@@ -31,11 +31,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs, initialTab = 0 }) => {
           </button>
         ))}
       </div>
-      <div>
-        {tabs[activeTab].content}
-      </div>
+      <div>{tabs[activeTab].content}</div>
     </div>
   );
 };
 
-export default Tabs; 
+export default Tabs;

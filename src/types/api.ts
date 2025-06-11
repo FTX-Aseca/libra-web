@@ -30,8 +30,8 @@ export interface TransactionRequest {
 export enum TransactionType {
   // Add possible transaction types here, e.g., DEBIT, CREDIT
   // For now, I'll add some placeholders.
-  EXPENSE = 'EXPENSE',
-  INCOME = 'INCOME',
+  EXPENSE = "EXPENSE",
+  INCOME = "INCOME",
 }
 
 export interface TransferRequest {
@@ -48,8 +48,8 @@ export interface TransferResponse {
 }
 
 export enum IdentifierType {
-  ALIAS = 'ALIAS',
-  CVU = 'CVU',
+  ALIAS = "ALIAS",
+  CVU = "CVU",
 }
 
 export interface TopUpRequest {
@@ -64,6 +64,8 @@ export interface TopUpResponse {
 
 export interface DebinRequestDto {
   amount: number;
+  identifierType: IdentifierType;
+  fromIdentifier: string;
 }
 
 export interface DebinResponse {
@@ -80,4 +82,4 @@ export interface AccountDetails {
   email: string;
   alias: string;
   cvu: string;
-} 
+}

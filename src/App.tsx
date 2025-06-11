@@ -1,18 +1,18 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './Login';
-import CreateAccount from './CreateAccount';
-import HomePage from './HomePage';
-import TransferPage from './TransferPage';
-import SettingsPage from './SettingsPage';
-import TransactionsPage from './TransactionsPage';
-import EnterDebinAmountPage from './EnterDebinAmountPage';
-import DebinRequestSentPage from './DebinRequestSentPage';
-import EnterTransferAmountPage from './pages/transfer/EnterTransferAmountPage';
-import TransferSentPage from './pages/transfer/TransferSentPage';
-import TopUpDetailsPage from './pages/topup/TopUpDetailsPage';
-import TopUpRequestSentPage from './pages/topup/TopUpRequestSentPage';
-import AuthGuard from './components/AuthGuard';
-import { getAuthToken } from './utils/auth';
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./Login";
+import CreateAccount from "./CreateAccount";
+import HomePage from "./HomePage";
+import TransferPage from "./TransferPage";
+import SettingsPage from "./SettingsPage";
+import TransactionsPage from "./TransactionsPage";
+import EnterDebinAmountPage from "./EnterDebinAmountPage";
+import DebinRequestSentPage from "./DebinRequestSentPage";
+import EnterTransferAmountPage from "./pages/transfer/EnterTransferAmountPage";
+import TransferSentPage from "./pages/transfer/TransferSentPage";
+import TopUpDetailsPage from "./pages/topup/TopUpDetailsPage";
+import TopUpRequestSentPage from "./pages/topup/TopUpRequestSentPage";
+import AuthGuard from "./components/AuthGuard";
+import { getAuthToken } from "./utils/auth";
 
 // Placeholder components for other routes
 // const TransferPage = () => <div className="p-4 text-white">Transfer Page Content</div>;
@@ -40,9 +40,9 @@ function App() {
         <Route path="/topup/sent" element={<TopUpRequestSentPage />} />
       </Route>
 
-      <Route 
-        path="*" 
-        element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />} 
+      <Route
+        path="*"
+        element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />}
       />
     </Routes>
   );

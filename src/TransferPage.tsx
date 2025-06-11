@@ -1,47 +1,51 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import BottomNavigationBar from './components/BottomNavigationBar';
-import Tabs from './components/Tabs';
-import InputField from './components/InputField';
-import AuthButton from './components/AuthButton';
-import UserIcon from './components/icons/UserIcon'; // Assuming UserIcon is created
-import { IdentifierType } from './types/api';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BottomNavigationBar from "./components/BottomNavigationBar";
+import Tabs from "./components/Tabs";
+import InputField from "./components/InputField";
+import AuthButton from "./components/AuthButton";
+import UserIcon from "./components/icons/UserIcon"; // Assuming UserIcon is created
+import { IdentifierType } from "./types/api";
 
 // Placeholder for potential future navigation or step handling
 // import { useNavigate } from 'react-router-dom';
 
 const TransferTabContent: React.FC = () => {
-  const [alias, setAlias] = useState('');
-  const [transferType, setTransferType] = useState<IdentifierType>(IdentifierType.ALIAS);
+  const [alias, setAlias] = useState("");
+  const [transferType, setTransferType] = useState<IdentifierType>(
+    IdentifierType.ALIAS,
+  );
   const navigate = useNavigate();
 
   const handleContinue = () => {
     if (!alias.trim()) {
-      alert('Please enter a valid alias.');
+      alert("Please enter a valid alias.");
       return;
     }
-    navigate('/transfer/amount', { state: { recipientAlias: alias, transferType } });
+    navigate("/transfer/amount", {
+      state: { recipientAlias: alias, transferType },
+    });
   };
 
   return (
     <div className="px-4">
       <div className="flex mb-4">
-        <button 
+        <button
           onClick={() => setTransferType(IdentifierType.ALIAS)}
           className={`py-2 px-4 rounded-l-md text-sm font-medium w-1/2 ${
-            transferType === IdentifierType.ALIAS 
-            ? 'bg-teal-500 text-white' 
-            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            transferType === IdentifierType.ALIAS
+              ? "bg-teal-500 text-white"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
           }`}
         >
           Alias
         </button>
-        <button 
+        <button
           onClick={() => setTransferType(IdentifierType.CVU)}
           className={`py-2 px-4 rounded-r-md text-sm font-medium w-1/2 ${
-            transferType === IdentifierType.CVU 
-            ? 'bg-teal-500 text-white' 
-            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            transferType === IdentifierType.CVU
+              ? "bg-teal-500 text-white"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
           }`}
         >
           CVU
@@ -64,13 +68,55 @@ const TransferTabContent: React.FC = () => {
 };
 
 const DebinTabContent: React.FC = () => {
+  const [identifier, setIdentifier] = useState("");
+  const [identifierType, setIdentifierType] = useState<IdentifierType>(
+    IdentifierType.ALIAS,
+  );
   const navigate = useNavigate();
+
   const handleContinue = () => {
-    navigate('/debin/enter-amount');
+    if (!identifier.trim()) {
+      alert(`Please enter a valid ${identifierType.toLowerCase()}.`);
+      return;
+    }
+    navigate("/debin/enter-amount", {
+      state: { fromIdentifier: identifier, identifierType },
+    });
   };
+
   return (
     <div className="px-4">
-      <p className="text-gray-400 mb-6 text-center">Request DEBIN from another account.</p>
+      <div className="flex mb-4">
+        <button
+          onClick={() => setIdentifierType(IdentifierType.ALIAS)}
+          className={`py-2 px-4 rounded-l-md text-sm font-medium w-1/2 ${
+            identifierType === IdentifierType.ALIAS
+              ? "bg-teal-500 text-white"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+          }`}
+        >
+          Alias
+        </button>
+        <button
+          onClick={() => setIdentifierType(IdentifierType.CVU)}
+          className={`py-2 px-4 rounded-r-md text-sm font-medium w-1/2 ${
+            identifierType === IdentifierType.CVU
+              ? "bg-teal-500 text-white"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+          }`}
+        >
+          CVU
+        </button>
+      </div>
+      <InputField
+        id="identifier"
+        label={identifierType}
+        type="text"
+        placeholder={`Enter ${identifierType}`}
+        value={identifier}
+        onChange={(e) => setIdentifier(e.target.value)}
+        icon={<UserIcon />}
+      />
       <AuthButton onClick={handleContinue} fullWidth={true}>
         Continue
       </AuthButton>
@@ -81,7 +127,7 @@ const DebinTabContent: React.FC = () => {
 const TopUpTabContent: React.FC = () => {
   const navigate = useNavigate();
   const handleContinueTopUp = () => {
-    navigate('/topup');
+    navigate("/topup");
   };
   return (
     <div className="px-4">
@@ -95,9 +141,9 @@ const TopUpTabContent: React.FC = () => {
 
 const TransferPage: React.FC = () => {
   const tabs = [
-    { label: 'Transfer', content: <TransferTabContent /> },
-    { label: 'DEBIN', content: <DebinTabContent /> },
-    { label: 'Top-Up', content: <TopUpTabContent /> },
+    { label: "Transfer", content: <TransferTabContent /> },
+    { label: "DEBIN", content: <DebinTabContent /> },
+    { label: "Top-Up", content: <TopUpTabContent /> },
   ];
 
   return (
@@ -111,4 +157,4 @@ const TransferPage: React.FC = () => {
   );
 };
 
-export default TransferPage; 
+export default TransferPage;

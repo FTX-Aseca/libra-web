@@ -4,6 +4,12 @@
 # Usage: <type>(<scope>): <short description>
 
 commit_msg_file="$1"
+# Skip validation if no commit message file provided or using STDIN
+if [ -z "$commit_msg_file" ] || [ "$commit_msg_file" = "-" ] || [ ! -f "$commit_msg_file" ]; then
+  exit 0
+fi
+
+echo commit_msg_file: $commit_msg_file
 
 # Regex for header: type(scope): short description
 header_regex='^(feat|fix|build|chore|ci|docs|perf|refactor|revert|style|test)(\([^)]+\))?: .+'

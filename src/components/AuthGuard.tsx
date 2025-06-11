@@ -1,12 +1,8 @@
-import React from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { getAuthToken } from '../utils/auth';
+import React from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { getAuthToken } from "../utils/auth";
 
-interface AuthGuardProps {
-  // No specific props needed for this basic guard, but can be extended
-}
-
-const AuthGuard: React.FC<AuthGuardProps> = () => {
+const AuthGuard: React.FC = () => {
   const token = getAuthToken();
   const location = useLocation();
 
@@ -21,4 +17,4 @@ const AuthGuard: React.FC<AuthGuardProps> = () => {
   return <Outlet />; // Render the children routes if token exists
 };
 
-export default AuthGuard; 
+export default AuthGuard;

@@ -1,9 +1,9 @@
-import React from 'react';
-import BottomNavigationBar from './components/BottomNavigationBar';
-import CopyIcon from './components/icons/CopyIcon';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { removeAuthToken } from './utils/auth'; // Corrected import path
-import { useAccountDetails } from './hooks/account/useAccountDetails';
+import React from "react";
+import BottomNavigationBar from "./components/BottomNavigationBar";
+import CopyIcon from "./components/icons/CopyIcon";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { removeAuthToken } from "./utils/auth"; // Corrected import path
+import { useAccountDetails } from "./hooks/account/useAccountDetails";
 
 interface InfoItemProps {
   label: string;
@@ -12,7 +12,12 @@ interface InfoItemProps {
 
 const SettingsPage: React.FC = () => {
   const accountId = 1; // TODO: dynamically determine accountId
-  const { data: accountDetails, loading, error, fetchDetails } = useAccountDetails(accountId);
+  const {
+    data: accountDetails,
+    loading,
+    error,
+    fetchDetails,
+  } = useAccountDetails(accountId);
   const navigate = useNavigate();
 
   if (loading) {
@@ -40,18 +45,19 @@ const SettingsPage: React.FC = () => {
   }
 
   const { email, alias, cvu } = accountDetails;
-  
+
   const handleLogout = () => {
     removeAuthToken();
-    navigate('/login', { replace: true });
-    console.log('User logged out');
+    navigate("/login", { replace: true });
+    console.log("User logged out");
   };
 
   const InfoItem: React.FC<InfoItemProps> = ({ label, value }) => {
     const handleCopy = () => {
-      navigator.clipboard.writeText(value)
+      navigator.clipboard
+        .writeText(value)
         .then(() => alert(`${label} copied to clipboard!`))
-        .catch(err => console.error('Failed to copy: ', err));
+        .catch((err) => console.error("Failed to copy: ", err));
     };
     return (
       <div className="flex justify-between items-center py-4 border-b border-gray-700">
@@ -75,7 +81,7 @@ const SettingsPage: React.FC = () => {
           <InfoItem label="Alias" value={alias} />
           <InfoItem label="CVU" value={cvu} />
         </div>
-        <button 
+        <button
           onClick={handleLogout}
           className="w-full mt-8 py-3 rounded-lg bg-red-600 text-white font-bold text-lg hover:bg-red-700 transition-colors"
         >
@@ -87,4 +93,4 @@ const SettingsPage: React.FC = () => {
   );
 };
 
-export default SettingsPage; 
+export default SettingsPage;

@@ -1,26 +1,26 @@
-import { useState, useCallback } from 'react';
-import axios from 'axios';
-import { API_URL } from './utils/routes';
-import { getAuthToken } from '../utils/auth';
+import { useState, useCallback } from "react";
+import axios from "axios";
+import { API_URL } from "./utils/routes";
+import { getAuthToken } from "../utils/auth";
 
 type UsePutProps = {
   path: string;
   headers?: Record<string, string>;
-  onSuccess?: (body?: any) => void;
-  onError?: (error?: any) => void;
+  onSuccess?: (body?: unknown) => void;
+  onError?: (error?: unknown) => void;
 };
 export default function usePut({
   path,
   headers = {},
   onSuccess = () => {},
-  onError = () => {}
+  onError = () => {},
 }: UsePutProps) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(undefined);
-  const [data, setData] = useState(null);
+  const [error, setError] = useState<unknown>();
+  const [data, setData] = useState<unknown>(null);
 
   const call = useCallback(
-    async (body: any) => {
+    async (body: unknown) => {
       setLoading(true);
       setError(undefined);
       const token = getAuthToken();
@@ -28,18 +28,18 @@ export default function usePut({
 
       try {
         const response = await axios.put(`${API_URL}${path}`, body, {
-          headers: { 
-            ...headers, 
-            'Content-Type': 'application/json',
-            ...authHeaders
-          }
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+            ...authHeaders,
+          },
         });
         setData(response.data);
         if (onSuccess) {
           onSuccess(response.data);
           return response.data;
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError(err);
         if (onError) {
           onError(err);
@@ -48,7 +48,7 @@ export default function usePut({
       }
       setLoading(false);
     },
-    [path, headers, onSuccess, onError]
+    [path, headers, onSuccess, onError],
   );
 
   return [call, { data, loading, error }] as const;

@@ -1,115 +1,115 @@
 name: CD
 
 on:
-    push:
-        branches:
-            - main
-            - dev
+  push:
+    branches:
+      - main
+      - dev
 
 env:
-    REGISTRY: ghcr.io
-    OWNER: ftx-aseca
-    IMAGE_NAME: ${{ github.ref_name == 'dev' && 'libra-web-dev' || 'libra-web' }}
+  REGISTRY: ghcr.io
+  OWNER: ftx-aseca
+  IMAGE_NAME: ${{ github.ref_name == 'dev' && 'libra-web-dev' || 'libra-web' }}
 
 jobs:
-    release:
-        name: Build, Push Docker Image & Semantic Release
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
-            pull-requests: write
-            packages: write
-            issues: write
-            id-token: write
+  release:
+    name: Build, Push Docker Image & Semantic Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: write
+      issues: write
+      id-token: write
 
-        steps:
-            - name: Checkout code (full history)
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
+    steps:
+      - name: Checkout code (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-            - name: Log in to GitHub Container Registry
-              uses: docker/login-action@v3
-              with:
-                  registry: ${{ env.REGISTRY }}
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-            - name: Build & push Docker image (branch tag)
-              uses: docker/build-push-action@v5
-              with:
-                  context: .
-                  file: Dockerfile
-                  push: true
-                  tags: |
-                      ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+      - name: Build & push Docker image (branch tag)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: '20'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
 
-            - name: Install semantic-release and plugins
-              run: |
-                  npm install -g semantic-release@^21.0.0 \
-                    @semantic-release/changelog@^6.0.0 \
-                    @semantic-release/commit-analyzer@^9.0.0 \
-                    @semantic-release/exec@^6.0.0 \
-                    @semantic-release/git@^10.0.0 \
-                    @semantic-release/github@^8.0.0 \
-                    @semantic-release/release-notes-generator@^10.0.0
+      - name: Install semantic-release and plugins
+        run: |
+          npm install -g semantic-release@^21.0.0 \
+            @semantic-release/changelog@^6.0.0 \
+            @semantic-release/commit-analyzer@^9.0.0 \
+            @semantic-release/exec@^6.0.0 \
+            @semantic-release/git@^10.0.0 \
+            @semantic-release/github@^8.0.0 \
+            @semantic-release/release-notes-generator@^10.0.0
 
-            - name: Set Git user for semantic-release
-              run: |
-                  git config --global user.name "${{ github.actor }}"
-                  git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      - name: Set Git user for semantic-release
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-            - name: Run semantic-release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: npx semantic-release
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
 
-            - name: Fetch tags & determine release tag
-              id: fetch-tags
-              run: |
-                  git fetch --prune --unshallow || true
-                  git fetch --tags origin
-                  # Get the tag that points at HEAD (semantic-release should have created one)
-                  TAG=$(git tag --points-at HEAD)
-                  echo "RELEASE_TAG=$TAG" >> $GITHUB_OUTPUT
+      - name: Fetch tags & determine release tag
+        id: fetch-tags
+        run: |
+          git fetch --prune --unshallow || true
+          git fetch --tags origin
+          # Get the tag that points at HEAD (semantic-release should have created one)
+          TAG=$(git tag --points-at HEAD)
+          echo "RELEASE_TAG=$TAG" >> $GITHUB_OUTPUT
 
-            - name: Show RELEASE_TAG
-              run: echo "Release tag is ${{ steps.fetch-tags.outputs.RELEASE_TAG }}"
-            - name: Build & push Docker image (version tag)
-              if: steps.fetch-tags.outputs.RELEASE_TAG != ''
-              run: |
-                  IMAGE_FULL="${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}"
-                  docker build \
-                    --file Dockerfile \
-                    --tag "$IMAGE_FULL:${{ steps.fetch-tags.outputs.RELEASE_TAG }}" \
-                    .
-                  docker push "$IMAGE_FULL:${{ steps.fetch-tags.outputs.RELEASE_TAG }}"
+      - name: Show RELEASE_TAG
+        run: echo "Release tag is ${{ steps.fetch-tags.outputs.RELEASE_TAG }}"
+      - name: Build & push Docker image (version tag)
+        if: steps.fetch-tags.outputs.RELEASE_TAG != ''
+        run: |
+          IMAGE_FULL="${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}"
+          docker build \
+            --file Dockerfile \
+            --tag "$IMAGE_FULL:${{ steps.fetch-tags.outputs.RELEASE_TAG }}" \
+            .
+          docker push "$IMAGE_FULL:${{ steps.fetch-tags.outputs.RELEASE_TAG }}"
 
-            - name: Save Docker image to tarball
-              if: steps.fetch-tags.outputs.RELEASE_TAG != ''
-              id: save-docker
-              run: |
-                  IMAGE_FULL="${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}"
-                  IMAGE_TAG="${{ steps.fetch-tags.outputs.RELEASE_TAG }}"
-                  TAR_NAME="image-${IMAGE_TAG}.tar"
-                  docker pull "$IMAGE_FULL:$IMAGE_TAG"
-                  docker save "$IMAGE_FULL:$IMAGE_TAG" -o "$TAR_NAME"
-                  echo "TAR_PATH=$TAR_NAME" >> $GITHUB_OUTPUT
+      - name: Save Docker image to tarball
+        if: steps.fetch-tags.outputs.RELEASE_TAG != ''
+        id: save-docker
+        run: |
+          IMAGE_FULL="${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}"
+          IMAGE_TAG="${{ steps.fetch-tags.outputs.RELEASE_TAG }}"
+          TAR_NAME="image-${IMAGE_TAG}.tar"
+          docker pull "$IMAGE_FULL:$IMAGE_TAG"
+          docker save "$IMAGE_FULL:$IMAGE_TAG" -o "$TAR_NAME"
+          echo "TAR_PATH=$TAR_NAME" >> $GITHUB_OUTPUT
 
-            # 8. Upload the tarball as a Release asset
-            - name: Upload image tarball to GitHub Release
-              if: steps.fetch-tags.outputs.RELEASE_TAG != ''
-              run: |
-                  TAG="${{ steps.fetch-tags.outputs.RELEASE_TAG }}"
-                  TAR_PATH="${{ steps.save-docker.outputs.TAR_PATH }}"
-                  gh release upload "$TAG" "$TAR_PATH" --clobber
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 8. Upload the tarball as a Release asset
+      - name: Upload image tarball to GitHub Release
+        if: steps.fetch-tags.outputs.RELEASE_TAG != ''
+        run: |
+          TAG="${{ steps.fetch-tags.outputs.RELEASE_TAG }}"
+          TAR_PATH="${{ steps.save-docker.outputs.TAR_PATH }}"
+          gh release upload "$TAG" "$TAR_PATH" --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

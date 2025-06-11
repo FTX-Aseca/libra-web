@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import BottomNavigationBar from '../../components/BottomNavigationBar';
-import InputField from '../../components/InputField';
-import AuthButton from '../../components/AuthButton';
-import DollarSignIcon from '../../components/icons/DollarSignIcon';
-import { useExternalTransfers } from '../../hooks/transactions/useExternalTransfers';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BottomNavigationBar from "../../components/BottomNavigationBar";
+import InputField from "../../components/InputField";
+import AuthButton from "../../components/AuthButton";
+import DollarSignIcon from "../../components/icons/DollarSignIcon";
+import { useExternalTransfers } from "../../hooks/transactions/useExternalTransfers";
 
 const TopUpDetailsPage: React.FC = () => {
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState("");
   const { requestTopUp, loading } = useExternalTransfers();
   const navigate = useNavigate();
 
   const handleContinue = async () => {
     if (!amount || parseFloat(amount) <= 0) {
-      alert('Please enter a valid amount.');
+      alert("Please enter a valid amount.");
       return;
     }
     try {
       await requestTopUp({ amount: parseFloat(amount) });
-      navigate('/topup/sent', { state: { amount: parseFloat(amount) } });
+      navigate("/topup/sent", { state: { amount: parseFloat(amount) } });
     } catch (err) {
-      console.error('Top-up error:', err);
-      alert('Error requesting top-up');
+      console.error("Top-up error:", err);
+      alert("Error requesting top-up");
     }
   };
 
@@ -40,7 +40,11 @@ const TopUpDetailsPage: React.FC = () => {
           required
         />
         <div className="mt-8">
-          <AuthButton onClick={handleContinue} fullWidth={true} disabled={loading}>
+          <AuthButton
+            onClick={handleContinue}
+            fullWidth={true}
+            disabled={loading}
+          >
             Continue
           </AuthButton>
         </div>
@@ -50,4 +54,4 @@ const TopUpDetailsPage: React.FC = () => {
   );
 };
 
-export default TopUpDetailsPage; 
+export default TopUpDetailsPage;
