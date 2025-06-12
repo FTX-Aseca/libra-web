@@ -9,7 +9,6 @@
     "build": "npm run lint && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "git config commit.template .gitmessage && simple-git-hooks",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
