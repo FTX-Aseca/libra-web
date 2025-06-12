@@ -12,20 +12,12 @@ module.exports = {
         changelogFile: "CHANGELOG.md",
       },
     ],
+    // Bump version in package.json
+    "@semantic-release/npm",
     [
-      "@semantic-release/exec", // Executes custom commands
+      "@semantic-release/git", // Commits updated files like CHANGELOG.md and package.json
       {
-        // Updates the version in build.gradle
-        // This command assumes your version line is like: version = '1.0.0'
-        // It will be updated to, e.g., version = '1.2.3' or version = '1.2.3-dev.1'
-        prepareCmd:
-          "sed -i \"s/version = '.*'/version = '${nextRelease.version}'/\" build.gradle",
-      },
-    ],
-    [
-      "@semantic-release/git", // Commits updated files like CHANGELOG.md and build.gradle
-      {
-        assets: ["CHANGELOG.md", "build.gradle"],
+        assets: ["CHANGELOG.md", "package.json"],
         message:
           "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
       },
@@ -40,4 +32,4 @@ module.exports = {
       },
     ],
   ],
-}; 
+};
