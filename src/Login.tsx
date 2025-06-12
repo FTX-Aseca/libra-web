@@ -4,7 +4,7 @@ import AuthLayout from "./components/AuthLayout";
 import AuthHeader from "./components/AuthHeader";
 import InputField from "./components/InputField";
 import AuthButton from "./components/AuthButton";
-import { useLogin } from "./hooks/auth/useLogin";
+import { useAuth } from "./context/AuthContext";
 
 // Placeholder hooks for backend interaction
 // const { data, isLoading } = useGetLogin();
@@ -45,15 +45,12 @@ const PasswordIcon = () => (
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, loading, error } = useLogin();
+  const { login, loading, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await login({ email, password });
-      if (response) {
-        console.log("Login successful in component:", response);
-      }
+      await login(email, password);
     } catch (err) {
       console.error("Login component error handling:", err);
     }

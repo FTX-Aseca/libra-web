@@ -4,6 +4,7 @@ import CopyIcon from "./components/icons/CopyIcon";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { removeAuthToken } from "./utils/auth"; // Corrected import path
 import { useAccountDetails } from "./hooks/account/useAccountDetails";
+import { useAuth } from "./context/AuthContext";
 
 interface InfoItemProps {
   label: string;
@@ -11,13 +12,16 @@ interface InfoItemProps {
 }
 
 const SettingsPage: React.FC = () => {
-  const accountId = 1; // TODO: dynamically determine accountId
+  const { authData } = useAuth();
+  const accountId = authData?.id ?? null;
   const {
     data: accountDetails,
-    loading,
-    error,
+    loading: detailsLoading,
+    error: detailsError,
     fetchDetails,
   } = useAccountDetails(accountId);
+  const loading = accountId === null || detailsLoading;
+  const error = detailsError;
   const navigate = useNavigate();
 
   if (loading) {

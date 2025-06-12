@@ -9,7 +9,8 @@ export type Transaction = TransactionResponse & { id: string };
 
 let nextId = 0;
 
-export const useGetAccountTransactions = (accountId: number) => {
+export const useGetAccountTransactions = (accountId: number | null) => {
+  const lazy = accountId === null;
   const path = React.useMemo(
     () => `/api/accounts/${accountId}/transactions`,
     [accountId],
@@ -21,6 +22,7 @@ export const useGetAccountTransactions = (accountId: number) => {
     call: fetchTransactions,
   } = useGet<TransactionResponse[]>({
     path: path,
+    lazy,
   });
 
   const transactionsWithId = React.useMemo(() => {

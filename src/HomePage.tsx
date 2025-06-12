@@ -2,6 +2,7 @@ import React from "react";
 import BottomNavigationBar from "./components/BottomNavigationBar";
 import { useAccountBalance } from "./hooks/account/useAccountBalance";
 import { useAccountDetails } from "./hooks/account/useAccountDetails";
+import { useAuth } from "./context/AuthContext";
 
 // BalanceCard now receives alias and balance as props
 interface BalanceCardProps {
@@ -35,7 +36,8 @@ const ActivityHeader: React.FC = () => {
 };
 
 const HomePage: React.FC = () => {
-  const accountId = 1; // TODO: dynamically determine current account
+  const { authData } = useAuth();
+  const accountId = authData?.id ?? null;
   const {
     data: balanceData,
     loading: balanceLoading,
@@ -48,7 +50,7 @@ const HomePage: React.FC = () => {
     error: detailsError,
     fetchDetails,
   } = useAccountDetails(accountId);
-  const loading = balanceLoading || detailsLoading;
+  const loading = accountId === null || balanceLoading || detailsLoading;
   const error = balanceError || detailsError;
 
   if (loading) {

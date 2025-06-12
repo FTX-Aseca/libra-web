@@ -1,4 +1,4 @@
-const AUTH_TOKEN_KEY = "libraAuthToken"; // Using a more specific key
+const AUTH_TOKEN_KEY = "libraAuthToken";
 
 export const saveAuthToken = (token: string): void => {
   localStorage.setItem(AUTH_TOKEN_KEY, token);

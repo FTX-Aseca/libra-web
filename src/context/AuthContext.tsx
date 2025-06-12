@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
-import { API_URL } from '../hooks/utils/routes';
-import { saveAuthToken, removeAuthToken, getAuthToken } from '../utils/auth';
-import type { AccountDetails } from '../types/api';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { API_URL } from "../hooks/utils/routes";
+import { saveAuthToken, removeAuthToken, getAuthToken } from "../utils/auth";
+import type { AccountDetails } from "../types/api";
 
 export interface AuthData {
   token: string;
@@ -24,7 +24,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [authData, setAuthData] = useState<AuthData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
@@ -46,11 +48,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setAuthData({ token, email, alias, cvu, id });
         })
         .catch((err) => {
-          console.error('Failed to load auth data:', err);
+          console.error("Failed to load auth data:", err);
           removeAuthToken();
         });
     } catch (err) {
-      console.error('Invalid token:', err);
+      console.error("Invalid token:", err);
       removeAuthToken();
     }
   }, []);
@@ -61,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const resp = await axios.post<{ token: string }>(
         `${API_URL}/api/auth/login`,
-        { email: emailParam, password: passwordParam }
+        { email: emailParam, password: passwordParam },
       );
       const token = resp.data.token;
       saveAuthToken(token);
@@ -69,12 +71,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const id = Number(decoded.sub);
       const detailsResp = await axios.get<AccountDetails>(
         `${API_URL}/api/accounts/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       const { email, alias, cvu } = detailsResp.data;
       const data: AuthData = { token, email, alias, cvu, id };
       setAuthData(data);
-      navigate('/home');
+      navigate("/home");
     } catch (err) {
       setError(err);
       throw err;
@@ -86,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     removeAuthToken();
     setAuthData(null);
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -98,6 +100,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
-}; 
+};

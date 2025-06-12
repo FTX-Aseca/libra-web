@@ -32,10 +32,6 @@ export const useGet = <T>({
       setLoading(true);
       setError(null);
       const token = getAuthToken();
-      console.log(
-        "[useGet] Retrieved auth token:",
-        token ? `Bearer ${token}` : "No token found",
-      );
       const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
       const currentPath = fetchPath || path;
       const currentHeaders = { ...headers, ...fetchHeaders, ...authHeaders };

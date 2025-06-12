@@ -9,6 +9,7 @@ import { usePendingTransfers } from "./hooks/transactions/usePendingTransfers";
 import type { PendingTransfer } from "./hooks/transactions/usePendingTransfers";
 import { useExternalTransfers } from "./hooks/transactions/useExternalTransfers";
 import { TransactionType as ApiTransactionType } from "./types/api";
+import { useAuth } from "./context/AuthContext";
 
 type CombinedTransaction = (Transaction | PendingTransfer) & {
   isPending?: boolean;
@@ -89,11 +90,12 @@ const PendingTransferItem: React.FC<{
 };
 
 const TransactionsPage: React.FC = () => {
-  const accountId = 1;
+  const { authData } = useAuth();
+  const accountId = authData?.id ?? null;
   const {
     data: transactions,
-    loading,
-    error,
+    loading: transactionsLoading,
+    error: transactionsError,
     fetchTransactions,
   } = useGetAccountTransactions(accountId);
   const { pendingTransfers } = usePendingTransfers();
@@ -120,7 +122,10 @@ const TransactionsPage: React.FC = () => {
     fetchTransactions();
   };
 
-  if (loading && combinedList.length === 0) {
+  const loading =
+    accountId === null || (transactionsLoading && combinedList.length === 0);
+  const error = transactionsError;
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#131A1A] flex flex-col items-center justify-center pb-16">
         <p className="text-white text-xl">Loading transactions...</p>

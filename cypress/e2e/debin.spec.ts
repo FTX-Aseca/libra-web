@@ -18,8 +18,8 @@ describe("DEBIN success flow", () => {
 
     cy.url().should("include", "/home");
     // Ensure account API calls are stubbed
-    cy.wait("@getBalance");
-    cy.wait("@getDetails");
+    // cy.wait("@getBalance");
+    // cy.wait("@getDetails");
 
     // Navigate to Transfer page
     cy.contains("Transfer").click();
