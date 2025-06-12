@@ -60,7 +60,7 @@ const EnterDebinAmountPage: React.FC = () => {
         <AuthButton onClick={handleConfirm} fullWidth={true} disabled={loading}>
           Confirm
         </AuthButton>
-        {error && (
+        {!!error && (
           <p className="text-red-500 text-center mt-4">
             Unable to complete DEBIN. Balance not enough
           </p>
