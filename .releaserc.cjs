@@ -1,4 +1,3 @@
-// .releaserc.js
 module.exports = {
   branches: [
     "main",
@@ -41,4 +40,4 @@ module.exports = {
       },
     ],
   ],
-};
+}; 
